@@ -216,3 +216,38 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# ============ PowerShell ============
+*.ps1
+*.psm1
+*.psd1
+*.ps1xml
+*.pssc
+*.cdxml
+*.psrc
+*.pss
+*.psc1
+*.psc2
+
+# ============ Linux Shell ============
+*.sh
+*.bash
+*.zsh
+*.fish
+*.bash_history
+*.zsh_history
+
+# ============ 日志文件 ============
+*.log
+*.log.bak
+monitor.log
+monitor_*.log
+
+# ============ 临时文件 ============
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
