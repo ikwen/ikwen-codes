@@ -1,0 +1,5 @@
+autocad 命令输入 appload,再选中这个文件加载。
+
+然后输入:'CreateLaserPath'  回车，
+先选择多个长方形，选择完后按空格，再选择多段线，选择完按空格就会自动生成了。
+激光路径生成器已加载，输入 CreateLaserPath 开始使用。
