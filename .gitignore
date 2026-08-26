@@ -251,3 +251,33 @@ monitor_*.log
 *.swp
 *.swo
 *~
+# ============ AutoCAD LISP ============
+*.fas
+*.vlx
+*.vlc
+*.lsp.bak
+*.lsp~
+*.mnl
+*.mns
+*.mnc
+*.mnr
+*.mnl
+*.dvb
+*.bak
+*.tmp
+*.err
+
+# ============ AutoCAD 临时文件 ============
+*.ac$
+*.dwl
+*.dwl2
+*.sv$
+*.dmp
+*.log
+
+# ============ 编译文件 ============
+*.exe
+*.dll
+*.arx
+*.crx
+*.dbx
