@@ -1,0 +1,114 @@
+配置 Cloudflare Tunnel 暴露向日葵
+第一步：安装 cloudflared（如果还没装）
+bash
+# 下载
+wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+
+# 安装
+sudo dpkg -i cloudflared-linux-amd64.deb
+
+# 验证
+cloudflared --version
+第二步：登录 Cloudflare
+bash
+cloudflared tunnel login
+复制输出的链接到浏览器打开，选择你的域名授权。
+
+第三步：创建 Tunnel
+bash
+# 创建隧道
+cloudflared tunnel create sunlogin-tunnel
+记下输出的 tunnel ID 和 JSON 文件路径。
+
+第四步：配置 DNS
+bash
+# 把子域名指向 tunnel（替换成你的实际域名）
+cloudflared tunnel route dns sunlogin-tunnel sunlogin.你的域名.com
+第五步：创建配置文件
+bash
+sudo mkdir -p /etc/cloudflared
+sudo nano /etc/cloudflared/config.yml
+粘贴以下内容（记得改域名和端口）：
+
+yaml
+tunnel: sunlogin-tunnel
+credentials-file: /home/ikwen/.cloudflared/sunlogin-tunnel.json
+
+ingress:
+  - hostname: sunlogin.你的域名.com
+    service: tcp://localhost:45905
+  - service: http_status:404
+注意：用的是 45905 端口（向日葵的主监听端口），也可以换成 16067，但 45905 看起来是主要端口。
+
+保存退出（Ctrl+O，回车，Ctrl+X）。
+
+第六步：启动 Tunnel 服务
+bash
+# 安装为系统服务
+sudo cloudflared service install
+
+# 启动服务
+sudo systemctl start cloudflared
+
+# 查看状态
+sudo systemctl status cloudflared
+
+# 查看实时日志（确认没问题）
+sudo journalctl -u cloudflared -f
+如果看到类似 Registered tunnel connection 的日志，说明连接成功。
+
+第七步：测试连接
+在你本地电脑（不是 Debian）安装 cloudflared 后执行：
+
+bash
+cloudflared access tcp --hostname sunlogin.你的域名.com --url localhost:45905
+保持这个窗口打开，然后：
+
+打开你的向日葵客户端
+
+连接地址填：localhost:45905
+
+输入向日葵的 ID 和密码
+
+应该就能连上了！
+
+第八步（可选）：直接通过浏览器访问
+如果你的向日葵支持 Web 控制，也可以在 Cloudflare Zero Trust 面板中把服务类型改为 HTTP，然后直接用浏览器访问 https://sunlogin.你的域名.com。
+
+📌 完整架构图
+text
+你 (本地向日葵客户端)
+    ↓
+localhost:45905 (本地端口转发)
+    ↓
+cloudflared (本地电脑)
+    ↓
+Cloudflare Tunnel (加密隧道)
+    ↓
+sunlogin.你的域名.com
+    ↓
+Cloudflare Edge Network
+    ↓
+Debian 服务器 (cloudflared)
+    ↓
+localhost:45905 → 向日葵服务 (wausun)
+💡 注意事项
+向日葵的两个端口：
+
+45905：主通信端口（推荐用这个）
+
+16067：辅助端口（备用）
+
+Cloudflare Tunnel 免费版限制：
+
+每个 Tunnel 最多支持 50 个连接
+
+带宽没有限制（但 Cloudflare 有合理的流量策略）
+
+安全性：
+
+所有流量都通过 Cloudflare 加密
+
+建议在 Cloudflare Zero Trust 面板中设置访问策略（比如邮箱验证或一次性密码）
+
+现在你不需要公网 IP，不需要 SSH 隧道，直接用域名就能访问向日葵了！配置过程中如果遇到问题，把错误日志贴给我。

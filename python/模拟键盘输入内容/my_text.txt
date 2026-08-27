@@ -1,1 +1,32 @@
-wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+#!/usr/bin/env python3
+import subprocess
+import sys
+import os
+
+def capture_terminal_output():
+    """
+    使用 script 命令捕获所有终端输出到 1.txt
+    """
+    output_file = "1.txt"
+    
+    # 使用 script 命令记录所有终端输出
+    # -q 参数使 script 静默运行
+    # -f 参数实时刷新输出
+    cmd = ["script", "-q", "-f", output_file]
+    
+    print(f"开始记录终端输出到 {output_file}")
+    print("输入 'exit' 或按 Ctrl+D 停止记录")
+    print("=" * 50)
+    
+    try:
+        # 启动 script 进程
+        subprocess.run(cmd)
+    except KeyboardInterrupt:
+        print("\n\n记录已停止")
+    except Exception as e:
+        print(f"错误: {e}")
+    
+    print(f"\n输出已保存到 {output_file}")
+
+if __name__ == "__main__":
+    capture_terminal_output()
