@@ -1,0 +1,19 @@
+ 查看仓库信息
+bash
+# 查看远程仓库地址
+git remote -v
+
+# 查看当前分支
+git branch
+
+# 查看提交历史
+git log --oneline
+
+# 修改文件后
+git add .
+git commit -m "修改说明"
+git push
+
+可以用以下命令查看你当前的 Git 全局配置：
+bashgit config --global --list
+
